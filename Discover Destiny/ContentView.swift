@@ -14,17 +14,21 @@ struct ContentView: View {
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
-
+            
             DiscoverView()
                 .tabItem {
                     Label("Discover", systemImage: "magnifyingglass")
                 }
-
+            DiscoverView()
+                .tabItem {
+                    Label("Map", systemImage: "map.fill")
+                }
+            
             SavedView()
                 .tabItem {
                     Label("Saved", systemImage: "bookmark.fill")
                 }
-
+            
             ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
