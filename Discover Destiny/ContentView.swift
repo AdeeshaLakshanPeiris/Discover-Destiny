@@ -19,7 +19,7 @@ struct ContentView: View {
                 .tabItem {
                     Label("Discover", systemImage: "magnifyingglass")
                 }
-            DiscoverView()
+            MapView()
                 .tabItem {
                     Label("Map", systemImage: "map.fill")
                 }
