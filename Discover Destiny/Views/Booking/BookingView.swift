@@ -11,10 +11,18 @@ struct BookingView: View {
     var body: some View {
         ZStack {
             VStack {
-                Spacer()
                 VStack(){
+                    ZStack {
+                        Image("h1")
+                            .resizable()
+                            .ignoresSafeArea()
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: UIScreen.main.bounds.width / 1.2)
+                    .aspectRatio(contentMode: .fill)
+                    
                     HStack{
-                        VStack(alignment: .leading){
+                        VStack(alignment: .leading , spacing: 5){
                             Text("Safron Beach Hotel")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.darkBlue)
@@ -45,12 +53,79 @@ struct BookingView: View {
                         Spacer()
                             
                     }
+                    
+                    .padding(20)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white)
+                    .cornerRadius(30)
+                    .padding(.top, -40)
+
+                    BookingReviwsCardView()
+                    BookingFacilitiesView()
+                    Spacer()
+                    
+                    Button {
+                        
+                    } label: {
+                        VStack {
+                            Text("BOOK NOW")
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.lightBlue)
+                        .cornerRadius(12)
+                        .padding(.horizontal ,20)
+                        .padding(.bottom)
+                    }
+                    
+
+                    
                 }
             }
-            .padding(.horizontal,20)
         }
     }
 }
+struct BookingReviwsCardView: View {
+    var body: some View {
+        VStack {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("Reviews")
+                        .font(.headline)
+                    HStack {
+                        Image(systemName: "star.fill")
+                        Text("4.5")
+                        Text("(230 reviews)")
+                    }
+                    .font(.subheadline)
+                }
+                Spacer()
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(Color.white)
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(.darkBlue, lineWidth: 0.2)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .shadow(radius: 1)
+        .padding(.horizontal, 20)
+    }
+}
+
+struct BookingFacilitiesView : View {
+    var body: some View {
+        VStack {
+            
+        }
+    }
+}
+
+
 
 #Preview {
     BookingView()
