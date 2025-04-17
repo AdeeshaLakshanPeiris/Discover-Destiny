@@ -6,16 +6,18 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct DiscoverView: View {
+    @State private var searchText: String = ""
+
     var body: some View {
         ZStack(alignment: .top) {
             Color("AppBgColor").ignoresSafeArea()
             ScrollView(showsIndicators: false){
                 VStack(spacing: 0) {
-                    SearchHeaderView()
-                    SearchCardView()
-                    SearchTopSearchesView()
+                    SearchCardView(searchText: $searchText)
+                    SearchTopSearchesView(searchText: searchText)
                     Spacer()
                 }
                 .padding(.horizontal,20)
@@ -44,7 +46,7 @@ struct SearchHeaderView : View {
 
 
 struct SearchCardView: View {
-    @State private var searchText: String = ""
+    @Binding var searchText: String
     @State private var selectedDate: String = ""
     @State private var selectedRooms: String = ""
     
@@ -133,141 +135,220 @@ struct SearchCardView: View {
 }
 
 struct SearchTopSearchesView: View {
-    var body: some View {
-        VStack {
-            HStack(alignment: .bottom){
-                Text("Top searched hotels")
-                    .foregroundColor(Color("DarkBlue"))
-                    .font(.system(size: 16, weight: .semibold))
-                
-                Spacer()
-                
-               
+    
+    let hotelData: [Hotel] = [
+        Hotel(
+            name: "Saffron Beach Hotel",
+            location: "Wadduwa",
+            distanceFromCenter: "1.4km",
+            price: 100.50,
+            rating: 5,
+            boardType: "Half board",
+            imageName: "h1",
+            coordinates: CLLocationCoordinate2D(latitude: 6.6850, longitude: 79.9303)
+        ),
+        Hotel(
+            name: "Jetwing Blue",
+            location: "Negombo",
+            distanceFromCenter: "2.0km",
+            price: 125.00,
+            rating: 4,
+            boardType: "Full board",
+            imageName: "h2",
+            coordinates: CLLocationCoordinate2D(latitude: 7.2090, longitude: 79.8380)
+        ),
+        Hotel(
+            name: "Amari Galle",
+            location: "Galle",
+            distanceFromCenter: "1.8km",
+            price: 145.75,
+            rating: 5,
+            boardType: "Bed & Breakfast",
+            imageName: "h3",
+            coordinates: CLLocationCoordinate2D(latitude: 6.0367, longitude: 80.2170)
+        ),
+        Hotel(
+            name: "Cinnamon Grand",
+            location: "Colombo",
+            distanceFromCenter: "1.1km",
+            price: 180.00,
+            rating: 5,
+            boardType: "Half board",
+            imageName: "h1",
+            coordinates: CLLocationCoordinate2D(latitude: 6.9180, longitude: 79.8560)
+        ),
+        Hotel(
+            name: "Heritance Kandalama",
+            location: "Dambulla",
+            distanceFromCenter: "3.0km",
+            price: 140.99,
+            rating: 4,
+            boardType: "Full board",
+            imageName: "h2",
+            coordinates: CLLocationCoordinate2D(latitude: 7.6742, longitude: 80.6750)
+        ),
+        Hotel(
+            name: "Taj Bentota Resort",
+            location: "Bentota",
+            distanceFromCenter: "1.5km",
+            price: 160.00,
+            rating: 5,
+            boardType: "All inclusive",
+            imageName: "h3",
+            coordinates: CLLocationCoordinate2D(latitude: 6.4224, longitude: 79.9975)
+        ),
+        Hotel(
+            name: "The Grand Hotel",
+            location: "Nuwara Eliya",
+            distanceFromCenter: "0.5km",
+            price: 130.00,
+            rating: 4,
+            boardType: "Bed & Breakfast",
+            imageName: "h1",
+            coordinates: CLLocationCoordinate2D(latitude: 6.9667, longitude: 80.7833)
+        ),
+        Hotel(
+            name: "Anantaya Resort",
+            location: "Chilaw",
+            distanceFromCenter: "2.2km",
+            price: 110.00,
+            rating: 4,
+            boardType: "Half board",
+            imageName: "h2",
+            coordinates: CLLocationCoordinate2D(latitude: 7.5833, longitude: 79.8000)
+        ),
+        Hotel(
+            name: "Araliya Green Hills",
+            location: "Nuwara Eliya",
+            distanceFromCenter: "0.7km",
+            price: 150.00,
+            rating: 5,
+            boardType: "Full board",
+            imageName: "h3",
+            coordinates: CLLocationCoordinate2D(latitude: 6.9497, longitude: 80.7893)
+        ),
+        Hotel(
+            name: "Trinco Blu by Cinnamon",
+            location: "Trincomalee",
+            distanceFromCenter: "3.5km",
+            price: 120.00,
+            rating: 4,
+            boardType: "Bed & Breakfast",
+            imageName: "h1",
+            coordinates: CLLocationCoordinate2D(latitude: 8.5860, longitude: 81.2345)
+        )
+    ]
+    
+    var searchText: String
+        
+        var filteredHotels: [Hotel] {
+            if searchText.isEmpty {
+                return hotelData
+            } else {
+                return hotelData.filter {
+                    $0.location.lowercased().contains(searchText.lowercased()) ||
+                    $0.name.lowercased().contains(searchText.lowercased())
+                }
             }
-            VStack(spacing: 12){
-                TopSearchCardView(imageName: "h2")
-                TopSearchCardView(imageName: "hotel_landscape")
-                TopSearchCardView(imageName: "h2")
-                TopSearchCardView(imageName: "hotel_landscape")
-                TopSearchCardView(imageName: "h2")
-                TopSearchCardView(imageName: "hotel_landscape")
-                
-                Spacer()
-                
-            }
-            
         }
-        
-        
-        
-        
-        .background(Color("AppBgColor"))
-        .padding(.top,25)
-    }
-}
 
-struct TopSearchCardView : View {
-    
-    let imageName: String
-    
+        var body: some View {
+            VStack(alignment: .leading) {
+                HStack {
+                    Text("Top searched hotels")
+                        .foregroundColor(Color("DarkBlue"))
+                        .font(.system(size: 16, weight: .semibold))
+                    Spacer()
+                }
+                
+                VStack(spacing: 12) {
+                    ForEach(filteredHotels) { hotel in
+                        TopSearchCardView(hotel: hotel)
+                    }
+                }
+            }
+            .background(Color("AppBgColor"))
+            .padding(.top, 25)
+        }
+    }
+
+
+struct TopSearchCardView: View {
+    let hotel: Hotel
+
     var body: some View {
         ZStack {
-            Image(imageName)
+            Image(hotel.imageName)
                 .resizable()
                 .scaledToFill()
-            
-            
-            VStack(){
+
+            VStack {
                 HStack {
-                    HStack{
+                    HStack {
                         Image(systemName: "car.fill")
                             .foregroundColor(Color("DarkBlue"))
                             .font(.system(size: 12))
-                            .padding(.trailing , -3)
-                        Text("1.4 KM / 2 min")
+                        Text("\(hotel.distanceFromCenter) / 2 min")
                             .foregroundColor(Color("DarkBlue"))
-                            .font(.system(size: 12 , weight: .bold))
+                            .font(.system(size: 12, weight: .bold))
                             .opacity(0.8)
                     }
-                    .padding(.horizontal,5)
-                    .padding(.vertical,2)
-                    
-                    .background(
-                        Color.white.opacity(0.4)
-                            .blur(radius: 0.5)
-                    )
+                    .padding(6)
                     .background(.ultraThinMaterial)
                     .cornerRadius(10)
-                    .padding(10)
+
                     Spacer()
-                    HStack{
+
+                    HStack {
                         Image(systemName: "star.fill")
                             .foregroundColor(Color("DarkBlue"))
                             .font(.system(size: 12))
-                            .padding(.trailing , -3)
-                        Text("5")
+                        Text(String(format: "%.1f", hotel.rating))
                             .foregroundColor(.black)
-                            .font(.system(size: 12 , weight: .bold))
+                            .font(.system(size: 12, weight: .bold))
                             .opacity(0.8)
                     }
-                    .padding(.horizontal,5)
-                    .padding(.vertical,2)
-                    
-                    .background(
-                        Color.white.opacity(0.4)
-                            .blur(radius: 0.5)
-                    )
+                    .padding(6)
                     .background(.ultraThinMaterial)
                     .cornerRadius(10)
-                    .padding(10)
-                    
                 }
-                
+                .padding(10)
+
                 Spacer()
-                
-                HStack{
-                    VStack(alignment: .leading){
-                        HStack{
-                            Text("Saffron Beach Hotel")
-                                .foregroundColor(.white)
-                                .font(.system(size: 12, weight: .semibold))
-                            Text("• 1.4km from center")
-                                .foregroundColor(.white)
-                                .font(.system(size: 12, weight: .semibold))
+
+                HStack {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text(hotel.name)
+                            Text("• \(hotel.distanceFromCenter) from center")
                             Spacer()
-                            Text("100.50$")
-                                .foregroundColor(.white)
-                                .font(.system(size: 12, weight: .semibold))
-                            
+                            Text("\(String(format: "%.2f", hotel.price))$")
                         }
-                        HStack{
-                            Text("Wadduwa")
-                                .foregroundColor(.white)
-                                .font(.system(size: 8, weight: .regular))
+                        .foregroundColor(.white)
+                        .font(.system(size: 12, weight: .semibold))
+
+                        HStack {
+                            Text(hotel.location)
                                 .opacity(0.7)
                             Spacer()
-                            Text("Half board")
-                                .foregroundColor(.white)
-                                .font(.system(size: 8, weight: .regular))
+                            Text(hotel.boardType)
                         }
+                        .foregroundColor(.white)
+                        .font(.system(size: 8))
                     }
-                    
+
                     Spacer()
-                    
                 }
-                .padding(.vertical,5)
-                .padding(.horizontal,10)
+                .padding(.vertical, 5)
+                .padding(.horizontal, 10)
                 .background(Color("LightBlue"))
             }
-            
         }
-        .background(Color("AppBg"))
         .cornerRadius(12)
-        
-        
-        
     }
 }
+
+
 
 
 

@@ -1,3 +1,10 @@
+//
+//  MapView.swift
+//  Discover Destiny
+//
+//  Created by Guest User on 2025-04-12.
+//
+
 import SwiftUI
 import MapKit
 import CoreLocation
@@ -39,7 +46,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )
             
-            // ✅ only generate once
             if !self.hasGeneratedLocations {
                 self.nearbyLocations = self.generateNearbyLocations(from: coordinate, count: 5)
                 self.hasGeneratedLocations = true
@@ -140,7 +146,7 @@ struct MapView: View {
                 }
 
                 Button {
-                    // Book Now logic
+                    
                 } label: {
                     HStack {
                         Spacer()

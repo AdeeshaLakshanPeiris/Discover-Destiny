@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct HomeView: View {
     var body: some View {
@@ -159,6 +160,9 @@ struct HomeHeaderView : View {
             .padding(.horizontal, 25)
 
         }
+        .onAppear(perform: {
+            self.userName = Auth.auth().currentUser?.displayName ?? "User"
+        })
         .frame(height: UIScreen.main.bounds.width * 0.5)
     }
 }

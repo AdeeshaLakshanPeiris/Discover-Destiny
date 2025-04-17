@@ -1,14 +1,17 @@
 //
-//  LoginView.swift
+//  SignUpView.swift
 //  Discover Destiny
 //
-//  Created by Guest User on 2025-04-12.
+//  Created by Guest User on 2025-04-17.
 //
 
 import SwiftUI
+import Firebase
 
-struct LoginView: View {
-    @State private var username: String = ""
+struct SignUpView: View {
+    @State private var firstName: String = ""
+    @State private var lastName: String = ""
+    @State private var email: String = ""
     @State private var password: String = ""
     @Binding var isSignedIn: Bool
     @ObservedObject var authViewModel = AuthViewModel()
@@ -29,29 +32,53 @@ struct LoginView: View {
                     .scaledToFit()
                     .frame(width: UIScreen.main.bounds.width / 1.5, height: UIScreen.main.bounds.width / 1.5)
                 
-                VStack(spacing: 12) {
-                    TextField("Username", text: $username)
-                        .padding()
+                VStack(spacing: 5) {
+                    HStack{
+                        TextField("First Name", text: $firstName)
+                            .font(.system(size: 14))
+                            .padding(.vertical,10)
+                            .padding(.horizontal,15)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.white.opacity(0.9))
+                            .cornerRadius(10)
+                        
+                        TextField("Last Name", text: $lastName)
+                            .font(.system(size: 14))
+                            .padding(.vertical,10)
+                            .padding(.horizontal,15)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.white.opacity(0.9))
+                            .cornerRadius(10)
+                    }
+                    
+                    TextField("Email", text: $email)
+                        .font(.system(size: 14))
+                        .padding(.vertical,10)
+                        .padding(.horizontal,15)
                         .frame(maxWidth: .infinity)
                         .background(Color.white.opacity(0.9))
                         .cornerRadius(10)
                     
                     SecureField("Password", text: $password)
-                        .padding()
+                        .font(.system(size: 14))
+                        .padding(.vertical,10)
+                        .padding(.horizontal,15)
                         .frame(maxWidth: .infinity)
                         .background(Color.white.opacity(0.9))
                         .cornerRadius(10)
                 }
                 
                 Button(action: {
-                    authViewModel.loginWithEmail(email: username, password: password)
+                    authViewModel.signUpWithEmail(email: email, password: password, firstName: firstName, lastName: lastName)
                     if authViewModel.isAuthenticated {
                         isSignedIn = true
                     }
                 }) {
-                    Text("Login")
+                    Text("Sign Up")
                         .frame(maxWidth: .infinity)
-                        .padding()
+                        .font(.system(size: 14))
+                        .padding(.vertical,10)
+                        .padding(.horizontal,15)
                         .fontWeight(.bold)
                         .background(Color.white)
                         .foregroundColor(Color("DarkBlue"))
@@ -76,6 +103,8 @@ struct LoginView: View {
                         .foregroundColor(.white.opacity(0.5))
                 }
                 
+                
+                
                 Button(action: {
                     if authViewModel.isAuthenticated {
                         isSignedIn = true
@@ -90,38 +119,37 @@ struct LoginView: View {
                             .fontWeight(.semibold)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(.vertical,10)
+                    .padding(.horizontal,15)
                     .background(Color.white)
                     .foregroundColor(Color("DarkBlue"))
                     .cornerRadius(10)
                 }
                 
                 Spacer()
-                NavigationLink(destination: SignUpView(isSignedIn: .constant(false))) {
+                NavigationLink(destination: LoginView(isSignedIn: .constant(false))) {
                     HStack {
-                        Text("Haven't Account? Register Here")
+                        Text("Already have an account? Login")
                     }
+                    .frame(maxWidth: .infinity)
                     .foregroundColor(Color.white)
                 }
-                .navigationBarBackButtonHidden()
+
             }
-            .padding(.horizontal, 32)
+            .padding(.horizontal, 40)
             
             Spacer()
             
-            
+           
             
         }
-        .onReceive(authViewModel.$isAuthenticated) { authenticated in
-                if authenticated {
-                    isSignedIn = true
-                }
-            }
-        
+        .fontWeight(.semibold)
+
     }
 }
 
+
+
 #Preview {
-    let s = true
-    LoginView(isSignedIn: .constant(false))
+    SignUpView(isSignedIn: .constant(false))
 }
