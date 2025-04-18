@@ -10,6 +10,8 @@ import SwiftUI
 struct LoginView: View {
     @State private var username: String = ""
     @State private var password: String = ""
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     @Binding var isSignedIn: Bool
     @ObservedObject var authViewModel = AuthViewModel()
     
@@ -29,41 +31,48 @@ struct LoginView: View {
                     .scaledToFit()
                     .frame(width: UIScreen.main.bounds.width / 1.5, height: UIScreen.main.bounds.width / 1.5)
                 
-                VStack(spacing: 12) {
-                    TextField("Username", text: $username)
-                        .padding()
+                VStack(spacing: 8) {
+                    TextField("Email", text: $username)
+                        .font(.system(size: 14))
+                        .padding(.vertical,15)
+                        .padding(.horizontal,15)
                         .frame(maxWidth: .infinity)
                         .background(Color.white.opacity(0.9))
                         .cornerRadius(10)
                     
                     SecureField("Password", text: $password)
-                        .padding()
+                        .font(.system(size: 14))
+                        .padding(.vertical,15)
+                        .padding(.horizontal,15)
                         .frame(maxWidth: .infinity)
                         .background(Color.white.opacity(0.9))
                         .cornerRadius(10)
                 }
                 
                 Button(action: {
-                    authViewModel.loginWithEmail(email: username, password: password)
-                    if authViewModel.isAuthenticated {
-                        isSignedIn = true
+                    guard !username.isEmpty else {
+                        alertMessage = "Please enter your email."
+                        showAlert = true
+                        return
                     }
-                }) {
-                    Text("Login")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .fontWeight(.bold)
-                        .background(Color.white)
-                        .foregroundColor(Color("DarkBlue"))
-                        .cornerRadius(10)
-                }
-                
-                if let error = authViewModel.authError {
-                    Text(error)
-                        .foregroundColor(.red)
-                        .font(.caption)
-                        .padding(.top, 5)
-                }
+                    
+                    guard !password.isEmpty else {
+                        alertMessage = "Please enter your password."
+                        showAlert = true
+                        return
+                    }
+                    
+                    authViewModel.loginWithEmail(email: username, password: password)                }) {
+                        Text("Login")
+                            .frame(maxWidth: .infinity)
+                            .font(.system(size: 14))
+                            .padding(.vertical,15)
+                            .padding(.horizontal,15)
+                            .fontWeight(.bold)
+                            .background(Color.white)
+                            .foregroundColor(Color("DarkBlue"))
+                            .cornerRadius(10)
+                    }
                 
                 HStack {
                     Rectangle()
@@ -71,6 +80,7 @@ struct LoginView: View {
                         .foregroundColor(.white.opacity(0.5))
                     Text("OR")
                         .foregroundColor(.white)
+                        .font(.system(size: 12))
                     Rectangle()
                         .frame(height: 1)
                         .foregroundColor(.white.opacity(0.5))
@@ -89,8 +99,10 @@ struct LoginView: View {
                         Text("Login with Google")
                             .fontWeight(.semibold)
                     }
+                    .font(.system(size: 14))
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(.vertical,15)
+                    .padding(.horizontal,15)
                     .background(Color.white)
                     .foregroundColor(Color("DarkBlue"))
                     .cornerRadius(10)
@@ -99,7 +111,14 @@ struct LoginView: View {
                 Spacer()
                 NavigationLink(destination: SignUpView(isSignedIn: .constant(false))) {
                     HStack {
-                        Text("Haven't Account? Register Here")
+                        HStack{
+                            Text("Haven't Account?")
+                                .font(.system(size: 14))
+                            Text("Register Here")
+                                .font(.system(size: 14))
+                                .fontWeight(.semibold)
+                        }
+                        
                     }
                     .foregroundColor(Color.white)
                 }
@@ -112,11 +131,28 @@ struct LoginView: View {
             
             
         }
-        .onReceive(authViewModel.$isAuthenticated) { authenticated in
-                if authenticated {
-                    isSignedIn = true
-                }
+        
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text("Login Error"),
+                message: Text(alertMessage),
+                dismissButton: .default(Text("OK"))
+            )
+        }
+        
+        .onReceive(authViewModel.$authError) { error in
+            if let error = error {
+                alertMessage = error
+                showAlert = true
             }
+        }
+        
+        .onReceive(authViewModel.$isAuthenticated) { authenticated in
+            if authenticated {
+                isSignedIn = true
+            }
+        }
+        .navigationBarBackButtonHidden(true)
         
     }
 }

@@ -161,7 +161,7 @@ struct HomeHeaderView : View {
 
         }
         .onAppear(perform: {
-            self.userName = Auth.auth().currentUser?.displayName ?? "User"
+            self.userName = AuthViewModel().userModel?.displayName ?? "Adheesha"
         })
         .frame(height: UIScreen.main.bounds.width * 0.5)
     }

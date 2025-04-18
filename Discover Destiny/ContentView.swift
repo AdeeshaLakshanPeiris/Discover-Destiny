@@ -38,7 +38,7 @@ struct ContentView: View {
                             Label("Map", systemImage: "map.fill")
                         }
                     
-                    ARView()
+                    BookingHistoryView()
                         .tabItem {
                             Label("Saved", systemImage: "bookmark.fill")
                         }

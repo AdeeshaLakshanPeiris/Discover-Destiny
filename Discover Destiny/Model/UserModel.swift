@@ -1,10 +1,10 @@
-////
-////  UserModel.swift
-////  Discover Destiny
-////
-////  Created by Guest User on 2025-04-12.
-////
 //
+//  UserModel.swift
+//  Discover Destiny
+//
+//  Created by Guest User on 2025-04-12.
+//
+
 import Foundation
 import FirebaseAuth
 
@@ -19,5 +19,14 @@ struct UserModel: Identifiable, Codable {
         self.email = user.email
         self.displayName = user.displayName
         self.photoURL = user.photoURL
+    }
+
+    init(id: String, data: [String: Any]) {
+        self.id = id
+        self.email = data["email"] as? String
+        let firstName = data["firstName"] as? String ?? ""
+        let lastName = data["lastName"] as? String ?? ""
+        self.displayName = "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
+        self.photoURL = nil
     }
 }

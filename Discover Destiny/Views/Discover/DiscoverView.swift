@@ -8,19 +8,123 @@
 import SwiftUI
 import CoreLocation
 
-struct DiscoverView: View {
-    @State private var searchText: String = ""
+let topSearchHotels: [Hotel] = [
+    Hotel(
+        name: "Saffron Beach Hotel",
+        location: "Wadduwa",
+        distanceFromCenter: "1.4km",
+        price: 100.50,
+        rating: 5,
+        boardType: "Half board",
+        imageName: "h1",
+        coordinates: CLLocationCoordinate2D(latitude: 6.6850, longitude: 79.9303)
+    ),
+    Hotel(
+        name: "Jetwing Blue",
+        location: "Negombo",
+        distanceFromCenter: "2.0km",
+        price: 125.00,
+        rating: 4,
+        boardType: "Full board",
+        imageName: "h2",
+        coordinates: CLLocationCoordinate2D(latitude: 7.2090, longitude: 79.8380)
+    ),
+    Hotel(
+        name: "Amari Galle",
+        location: "Galle",
+        distanceFromCenter: "1.8km",
+        price: 145.75,
+        rating: 5,
+        boardType: "Bed & Breakfast",
+        imageName: "h3",
+        coordinates: CLLocationCoordinate2D(latitude: 6.0367, longitude: 80.2170)
+    ),
+    Hotel(
+        name: "Cinnamon Grand",
+        location: "Colombo",
+        distanceFromCenter: "1.1km",
+        price: 180.00,
+        rating: 5,
+        boardType: "Half board",
+        imageName: "h1",
+        coordinates: CLLocationCoordinate2D(latitude: 6.9180, longitude: 79.8560)
+    ),
+    Hotel(
+        name: "Heritance Kandalama",
+        location: "Dambulla",
+        distanceFromCenter: "3.0km",
+        price: 140.99,
+        rating: 4,
+        boardType: "Full board",
+        imageName: "h2",
+        coordinates: CLLocationCoordinate2D(latitude: 7.6742, longitude: 80.6750)
+    ),
+    Hotel(
+        name: "Taj Bentota Resort",
+        location: "Bentota",
+        distanceFromCenter: "1.5km",
+        price: 160.00,
+        rating: 5,
+        boardType: "All inclusive",
+        imageName: "h3",
+        coordinates: CLLocationCoordinate2D(latitude: 6.4224, longitude: 79.9975)
+    ),
+    Hotel(
+        name: "The Grand Hotel",
+        location: "Nuwara Eliya",
+        distanceFromCenter: "0.5km",
+        price: 130.00,
+        rating: 4,
+        boardType: "Bed & Breakfast",
+        imageName: "h1",
+        coordinates: CLLocationCoordinate2D(latitude: 6.9667, longitude: 80.7833)
+    ),
+    Hotel(
+        name: "Anantaya Resort",
+        location: "Chilaw",
+        distanceFromCenter: "2.2km",
+        price: 110.00,
+        rating: 4,
+        boardType: "Half board",
+        imageName: "h2",
+        coordinates: CLLocationCoordinate2D(latitude: 7.5833, longitude: 79.8000)
+    ),
+    Hotel(
+        name: "Araliya Green Hills",
+        location: "Nuwara Eliya",
+        distanceFromCenter: "0.7km",
+        price: 150.00,
+        rating: 5,
+        boardType: "Full board",
+        imageName: "h3",
+        coordinates: CLLocationCoordinate2D(latitude: 6.9497, longitude: 80.7893)
+    ),
+    Hotel(
+        name: "Trinco Blu by Cinnamon",
+        location: "Trincomalee",
+        distanceFromCenter: "3.5km",
+        price: 120.00,
+        rating: 4,
+        boardType: "Bed & Breakfast",
+        imageName: "h1",
+        coordinates: CLLocationCoordinate2D(latitude: 8.5860, longitude: 81.2345)
+    )
+]
 
+struct DiscoverView: View {
+    @State private var searchText = ""
+    @State private var selectedHotel: Hotel?
+    
     var body: some View {
-        ZStack(alignment: .top) {
-            Color("AppBgColor").ignoresSafeArea()
-            ScrollView(showsIndicators: false){
-                VStack(spacing: 0) {
-                    SearchCardView(searchText: $searchText)
-                    SearchTopSearchesView(searchText: searchText)
-                    Spacer()
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading) {
+                    SearchHeaderView()
+                    SearchTopSearchesView(searchText: searchText, selectedHotel: $selectedHotel)
                 }
-                .padding(.horizontal,20)
+            }
+            .navigationDestination(item: $selectedHotel) { hotel in
+                BookingConfirmView(hotel: hotel)
             }
         }
     }
@@ -39,8 +143,9 @@ struct SearchHeaderView : View {
             })
             Spacer()
         }
+        .padding(.horizontal)
         .padding(.top,15)
-        .padding(.bottom,25)
+        .padding(.bottom,-10)
     }
 }
 
@@ -135,153 +240,40 @@ struct SearchCardView: View {
 }
 
 struct SearchTopSearchesView: View {
+    @State var searchText: String
+    @Binding var selectedHotel: Hotel?
     
-    let hotelData: [Hotel] = [
-        Hotel(
-            name: "Saffron Beach Hotel",
-            location: "Wadduwa",
-            distanceFromCenter: "1.4km",
-            price: 100.50,
-            rating: 5,
-            boardType: "Half board",
-            imageName: "h1",
-            coordinates: CLLocationCoordinate2D(latitude: 6.6850, longitude: 79.9303)
-        ),
-        Hotel(
-            name: "Jetwing Blue",
-            location: "Negombo",
-            distanceFromCenter: "2.0km",
-            price: 125.00,
-            rating: 4,
-            boardType: "Full board",
-            imageName: "h2",
-            coordinates: CLLocationCoordinate2D(latitude: 7.2090, longitude: 79.8380)
-        ),
-        Hotel(
-            name: "Amari Galle",
-            location: "Galle",
-            distanceFromCenter: "1.8km",
-            price: 145.75,
-            rating: 5,
-            boardType: "Bed & Breakfast",
-            imageName: "h3",
-            coordinates: CLLocationCoordinate2D(latitude: 6.0367, longitude: 80.2170)
-        ),
-        Hotel(
-            name: "Cinnamon Grand",
-            location: "Colombo",
-            distanceFromCenter: "1.1km",
-            price: 180.00,
-            rating: 5,
-            boardType: "Half board",
-            imageName: "h1",
-            coordinates: CLLocationCoordinate2D(latitude: 6.9180, longitude: 79.8560)
-        ),
-        Hotel(
-            name: "Heritance Kandalama",
-            location: "Dambulla",
-            distanceFromCenter: "3.0km",
-            price: 140.99,
-            rating: 4,
-            boardType: "Full board",
-            imageName: "h2",
-            coordinates: CLLocationCoordinate2D(latitude: 7.6742, longitude: 80.6750)
-        ),
-        Hotel(
-            name: "Taj Bentota Resort",
-            location: "Bentota",
-            distanceFromCenter: "1.5km",
-            price: 160.00,
-            rating: 5,
-            boardType: "All inclusive",
-            imageName: "h3",
-            coordinates: CLLocationCoordinate2D(latitude: 6.4224, longitude: 79.9975)
-        ),
-        Hotel(
-            name: "The Grand Hotel",
-            location: "Nuwara Eliya",
-            distanceFromCenter: "0.5km",
-            price: 130.00,
-            rating: 4,
-            boardType: "Bed & Breakfast",
-            imageName: "h1",
-            coordinates: CLLocationCoordinate2D(latitude: 6.9667, longitude: 80.7833)
-        ),
-        Hotel(
-            name: "Anantaya Resort",
-            location: "Chilaw",
-            distanceFromCenter: "2.2km",
-            price: 110.00,
-            rating: 4,
-            boardType: "Half board",
-            imageName: "h2",
-            coordinates: CLLocationCoordinate2D(latitude: 7.5833, longitude: 79.8000)
-        ),
-        Hotel(
-            name: "Araliya Green Hills",
-            location: "Nuwara Eliya",
-            distanceFromCenter: "0.7km",
-            price: 150.00,
-            rating: 5,
-            boardType: "Full board",
-            imageName: "h3",
-            coordinates: CLLocationCoordinate2D(latitude: 6.9497, longitude: 80.7893)
-        ),
-        Hotel(
-            name: "Trinco Blu by Cinnamon",
-            location: "Trincomalee",
-            distanceFromCenter: "3.5km",
-            price: 120.00,
-            rating: 4,
-            boardType: "Bed & Breakfast",
-            imageName: "h1",
-            coordinates: CLLocationCoordinate2D(latitude: 8.5860, longitude: 81.2345)
-        )
-    ]
-    
-    var searchText: String
-        
-        var filteredHotels: [Hotel] {
-            if searchText.isEmpty {
-                return hotelData
-            } else {
-                return hotelData.filter {
-                    $0.location.lowercased().contains(searchText.lowercased()) ||
-                    $0.name.lowercased().contains(searchText.lowercased())
-                }
-            }
-        }
-
-        var body: some View {
-            VStack(alignment: .leading) {
-                HStack {
-                    Text("Top searched hotels")
-                        .foregroundColor(Color("DarkBlue"))
-                        .font(.system(size: 16, weight: .semibold))
-                    Spacer()
-                }
-                
-                VStack(spacing: 12) {
-                    ForEach(filteredHotels) { hotel in
-                        TopSearchCardView(hotel: hotel)
-                    }
-                }
-            }
-            .background(Color("AppBgColor"))
-            .padding(.top, 25)
+    private var filteredHotels: [Hotel] {
+        searchText.isEmpty ? topSearchHotels : topSearchHotels.filter {
+            $0.name.lowercased().contains(searchText.lowercased()) ||
+            $0.location.lowercased().contains(searchText.lowercased())
         }
     }
+    
+    var body: some View {
+        VStack(spacing: 15) {
+            SearchCardView(searchText: $searchText)
+            ForEach(filteredHotels) { hotel in
+                TopSearchCardView(hotel: hotel) {
+                    selectedHotel = hotel
+                }
+            }
+        }
+        .padding(.horizontal)
+    }
+}
+
 
 
 struct TopSearchCardView: View {
     let hotel: Hotel
-
+    var onTap: () -> Void
     var body: some View {
         ZStack {
             Image(hotel.imageName)
                 .resizable()
                 .scaledToFill()
-
+            
             VStack {
                 HStack {
                     HStack {
@@ -296,9 +288,9 @@ struct TopSearchCardView: View {
                     .padding(6)
                     .background(.ultraThinMaterial)
                     .cornerRadius(10)
-
+                    
                     Spacer()
-
+                    
                     HStack {
                         Image(systemName: "star.fill")
                             .foregroundColor(Color("DarkBlue"))
@@ -313,9 +305,9 @@ struct TopSearchCardView: View {
                     .cornerRadius(10)
                 }
                 .padding(10)
-
+                
                 Spacer()
-
+                
                 HStack {
                     VStack(alignment: .leading) {
                         HStack {
@@ -326,7 +318,7 @@ struct TopSearchCardView: View {
                         }
                         .foregroundColor(.white)
                         .font(.system(size: 12, weight: .semibold))
-
+                        
                         HStack {
                             Text(hotel.location)
                                 .opacity(0.7)
@@ -336,7 +328,7 @@ struct TopSearchCardView: View {
                         .foregroundColor(.white)
                         .font(.system(size: 8))
                     }
-
+                    
                     Spacer()
                 }
                 .padding(.vertical, 5)
@@ -344,7 +336,11 @@ struct TopSearchCardView: View {
                 .background(Color("LightBlue"))
             }
         }
+        
         .cornerRadius(12)
+        .onTapGesture {
+            onTap()
+        }
     }
 }
 
