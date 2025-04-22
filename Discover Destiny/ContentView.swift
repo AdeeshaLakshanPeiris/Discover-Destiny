@@ -10,25 +10,16 @@ import Firebase
 import FirebaseAuth
 
 struct ContentView: View {
-    @State private var isSignedIn: Bool = false
-    init() {
-        
-        if Auth.auth().currentUser != nil {
-            _isSignedIn = State(initialValue: true)
-        } else {
-            _isSignedIn = State(initialValue: false)
-        }
-    }
+    @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
         VStack {
-            if isSignedIn {
+            if authViewModel.isAuthenticated {
                 TabView {
                     HomeView()
                         .tabItem {
-                            Label("Home", systemImage: "house.fill")
+                            Label("Home", systemImage: "house")
                         }
-                    
                     DiscoverView()
                         .tabItem {
                             Label("Discover", systemImage: "magnifyingglass")
@@ -37,25 +28,30 @@ struct ContentView: View {
                         .tabItem {
                             Label("Map", systemImage: "map.fill")
                         }
-                    
                     BookingHistoryView()
                         .tabItem {
-                            Label("Saved", systemImage: "bookmark.fill")
+                            Label("Booking", systemImage: "bookmark.fill")
                         }
-                    
                     ProfileView()
                         .tabItem {
-                            Label("Profile", systemImage: "person.fill")
+                            Label("Profile", systemImage: "person")
                         }
+                        .environmentObject(authViewModel)
                 }
             } else {
-                LoginView(isSignedIn: $isSignedIn)
+                SignUpView()
+                    .environmentObject(authViewModel)
+                
+                //LoginView(isSignedIn: $authViewModel.isAuthenticated )
+                   // .environmentObject(authViewModel)
             }
         }
+       
     }
 }
 
-
 #Preview {
     ContentView()
+        .environmentObject(AuthViewModel())
 }
+

@@ -15,9 +15,8 @@ struct SignUpView: View {
     @State private var password: String = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @Binding var isSignedIn: Bool
-    @ObservedObject var authViewModel = AuthViewModel()
-    
+    @EnvironmentObject var authViewModel: AuthViewModel
+
     var body: some View {
         ZStack {
             Image("AppBg")
@@ -97,13 +96,7 @@ struct SignUpView: View {
                     
                     authViewModel.signUpWithEmail(email: email, password: password, firstName: firstName, lastName: lastName) { success in
                         if success {
-                            // Clear the fields
-                            firstName = ""
-                            lastName = ""
-                            email = ""
-                            password = ""
                             
-                            isSignedIn = true
                         }
                     }
                 }) {
@@ -154,7 +147,8 @@ struct SignUpView: View {
                     }
                 
                 Spacer()
-                NavigationLink(destination: LoginView(isSignedIn: .constant(false))) {
+                NavigationLink(destination: LoginView(isSignedIn: .constant(authViewModel.isAuthenticated))
+                    .environmentObject(authViewModel)) {
                     HStack {
                         Text("Already have an account?")
                             .font(.system(size: 14))
@@ -182,7 +176,7 @@ struct SignUpView: View {
         
         .onReceive(authViewModel.$isAuthenticated) { authenticated in
             if authenticated {
-                isSignedIn = true
+                
             }
         }
         
@@ -209,5 +203,6 @@ struct SignUpView: View {
 
 
 #Preview {
-    SignUpView(isSignedIn: .constant(false))
+    SignUpView()
+        .environmentObject(AuthViewModel())
 }

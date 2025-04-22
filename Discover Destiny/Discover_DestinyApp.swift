@@ -7,14 +7,19 @@
 
 import SwiftUI
 import Firebase
+import FirebaseAuth
 
 @main
 struct Discover_DestinyApp: App {
-    @StateObject private var authViewModel = AuthViewModel()
+    @StateObject var authViewModel = AuthViewModel()
 
     init() {
         if FirebaseApp.app() == nil {
             FirebaseApp.configure()
+        }
+        
+        if Auth.auth().currentUser != nil {
+            authViewModel.isAuthenticated = true
         }
     }
     

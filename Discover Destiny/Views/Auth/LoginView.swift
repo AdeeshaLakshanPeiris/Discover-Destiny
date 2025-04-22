@@ -13,8 +13,8 @@ struct LoginView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     @Binding var isSignedIn: Bool
-    @ObservedObject var authViewModel = AuthViewModel()
-    
+    @EnvironmentObject var authViewModel: AuthViewModel
+
     var body: some View {
         ZStack {
             Image("AppBg")
@@ -109,7 +109,8 @@ struct LoginView: View {
                 }
                 
                 Spacer()
-                NavigationLink(destination: SignUpView(isSignedIn: .constant(false))) {
+                NavigationLink(destination: SignUpView()
+                    .environmentObject(authViewModel)) {
                     HStack {
                         HStack{
                             Text("Haven't Account?")
@@ -160,4 +161,6 @@ struct LoginView: View {
 #Preview {
     let s = true
     LoginView(isSignedIn: .constant(false))
+        .environmentObject(AuthViewModel())
+
 }

@@ -6,39 +6,60 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct BookingView: View {
+    let hotel: Hotel
+    @Environment(\.presentationMode) var presentationMode
+
+    
     var body: some View {
         ZStack {
             VStack {
                 VStack(){
-                    ZStack {
-                        Image("h1")
+                    ZStack(alignment: .topLeading) {
+                        
+                        Image(hotel.imageName) // <- Use passed hotel image
                             .resizable()
                             .ignoresSafeArea()
+                        
+                        
+                        Button(action: {
+                                presentationMode.wrappedValue.dismiss()
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                                    .padding(10)
+                                    .background(Color.black.opacity(0.5))
+                                    .clipShape(Circle())
+                                    .padding(.top, 10)
+                                    .padding(.leading, 20)
+                            }
+                        
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: UIScreen.main.bounds.width / 1.2)
                     .aspectRatio(contentMode: .fill)
                     
-                    HStack{
+                    HStack {
                         VStack(alignment: .leading , spacing: 5){
-                            Text("Safron Beach Hotel")
+                            Text(hotel.name)
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.darkBlue)
-                            HStack{
-                                Text("12, Galle Rd , Wadduwa")
+                            HStack {
+                                Text(hotel.location)
                                     .font(.system(size: 14, weight: .regular))
                                     .foregroundColor(.darkBlue)
                                     .opacity(0.6)
-                                Text("• 1.4 KM from center")
+                                Text("• \(hotel.distanceFromCenter)")
                                     .font(.system(size: 14, weight: .regular))
                                     .foregroundColor(.darkBlue)
                                     .opacity(0.6)
                                 Spacer()
                             }
-                            HStack(alignment: .lastTextBaseline){
-                                Text("$190.32/")
+                            HStack(alignment: .lastTextBaseline) {
+                                Text("$\(hotel.price, specifier: "%.2f")/")
                                     .font(.system(size: 24, weight: .semibold))
                                     .foregroundColor(.lightBlue)
                                 Text("1 night")
@@ -49,11 +70,8 @@ struct BookingView: View {
                                 Spacer()
                             }
                         }
-                        
                         Spacer()
-                            
                     }
-                    
                     .padding(20)
                     .frame(maxWidth: .infinity)
                     .background(Color.white)
@@ -61,32 +79,59 @@ struct BookingView: View {
                     .padding(.top, -40)
 
                     BookingReviwsCardView()
+                    ARButton()
                     BookingFacilitiesView()
                     Spacer()
                     
-                    Button {
-                        
-                    } label: {
-                        VStack {
-                            Text("BOOK NOW")
-                                .foregroundColor(.white)
-                                .fontWeight(.semibold)
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.lightBlue)
-                        .cornerRadius(12)
-                        .padding(.horizontal ,20)
-                        .padding(.bottom)
+                    NavigationLink(destination: BookingConfirmView(hotel: hotel)) {
+                        Text("BOOK NOW")
+                            .foregroundColor(.white)
+                            .fontWeight(.semibold)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.lightBlue)
+                            .cornerRadius(12)
+                            .padding(.horizontal ,20)
+                            .padding(.bottom)
                     }
-                    
-
-                    
                 }
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
+
+
+import SwiftUI
+
+struct ARButton: View {
+    @State private var showARView = false
+
+    var body: some View {
+        Button(action: {
+            showARView = true
+        }) {
+            HStack {
+                Spacer()
+                Text("Show AR View")
+                    .foregroundColor(.blue)
+                    .padding()
+                Spacer()
+            }
+            .background(Color.clear)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.blue, lineWidth: 1.5)
+            )
+            .cornerRadius(12)
+            .padding(.horizontal)
+        }
+        .sheet(isPresented: $showARView) {
+            ARView()
+        }
+    }
+}
+
 
 
 struct Facility: Identifiable {
@@ -195,5 +240,14 @@ struct BookingReviwsCardView: View {
 
 
 #Preview {
-    BookingView()
+    BookingView(hotel: Hotel(
+        name: "Sunrise Resort",
+        location: "Maldives",
+        distanceFromCenter: "0.5 km",
+        price: 299.99,
+        rating: 5,
+        boardType: "All Inclusive",
+        imageName: "resort_image",
+        coordinates: CLLocationCoordinate2D(latitude: 3.2028, longitude: 73.2207)
+    ))
 }

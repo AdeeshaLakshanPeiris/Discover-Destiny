@@ -6,60 +6,189 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseAuth
 
 struct ProfileView: View {
+    
+    @State private var userName: String = "Adheesha"
+    @State private var userEmail: String = "adheesh@gmail.com"
     @EnvironmentObject var authViewModel: AuthViewModel
     
     var body: some View {
-        VStack {
-            HStack {
-                Image(systemName: "person.circle.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 80, height: 80)
-                    .foregroundColor(.blue)
-                
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Hello, \(authViewModel.user?.displayName ?? "User")!")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.darkBlue)
-                    
-                    Text(authViewModel.user?.email ?? "No Email")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                }
-                .padding(.leading, 10)
+        
+        
+        VStack{
+            Image("user_img")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 200, height: 200)
+                .cornerRadius(200)
+                .padding(.vertical,30)
+            HStack(alignment: .top){
+                Text("\(userName)")
+                    .foregroundColor(.darkBlue)
+                    .fontWeight(.semibold)
+                    .font(.system(size: 30))
             }
-            .padding(.top, 40)
-            .padding(.bottom, 20)
+
             
-            Button(action: {
-                authViewModel.signOut()
-            }) {
-                HStack {
-                    Image(systemName: "arrow.right.circle.fill")
-                        .foregroundColor(.white)
-                    Text("Sign Out")
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
+            VStack{
+                HStack{
+                    Image(systemName: "envelope.fill")
+                        .foregroundColor(Color.darkBlue)
+                        .fontWeight(.semibold)
+                        .font(.system(size: 12))
+                        .padding(.leading,5)
+                    Text("Email")
+                        .fontWeight(.medium)
+                        .font(.system(size: 15))
+                        .padding(.leading,5)
+                    
+                    
+                    Spacer()
+                    Text("\(userEmail)")
+                        .foregroundColor(Color.gray)
+                        .fontWeight(.medium)
+                        .font(.system(size: 15))
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(Color.gray)
+                        .fontWeight(.semibold)
+                        .font(.system(size: 12))
                 }
-                .padding()
-                .background(Color.red)
-                .cornerRadius(10)
+                .padding(.vertical,2)
+                
             }
-            .padding(.horizontal, 20)
+            .padding()
+            .background(Color.white)
+            .cornerRadius(15)
+            
+           
+            
+            VStack{
+                HStack{
+                    
+                    VStack{
+                        Image(systemName: "iphone.sizes")
+                            .font(.system(size: 15))
+                            .opacity(0.6)
+                        
+                        
+                    }
+                    .frame(width: 30,height: 30)
+                    Text("Other Contacts")
+                        .fontWeight(.medium)
+                        .font(.system(size: 15))
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(Color.black)
+                        .fontWeight(.semibold)
+                        .font(.system(size: 12))
+                }
+                HStack{
+                    
+                    VStack{
+                        Text("?")
+                            .font(.system(size: 15))
+                            .fontWeight(.bold)
+                            .foregroundColor(.darkBlue)
+                            .opacity(0.7)
+                        
+                    }
+                    .frame(width: 30,height: 30)
+                    Text("Privacy Policy")
+                        .fontWeight(.medium)
+                        .font(.system(size: 15))
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(Color.black)
+                        .fontWeight(.semibold)
+                        .font(.system(size: 12))
+                }
+                HStack{
+                    
+                    VStack{
+                        Image(systemName: "info.circle")
+                            .font(.system(size: 15))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.darkBlue)
+                            .opacity(0.7)
+
+                    }
+                    .frame(width: 30,height: 30)
+                    Text("About us")
+                        .fontWeight(.medium)
+                        .font(.system(size: 15))
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(Color.black)
+                        .fontWeight(.semibold)
+                        .font(.system(size: 12))
+                }
+                
+                HStack{
+                    
+                    VStack{
+                        Image(systemName: "message.circle")
+                            .font(.system(size: 15))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.darkBlue)
+                            .opacity(0.7)
+
+                    }
+                    .frame(width: 30,height: 30)
+                    Text("Contact us")
+                        .fontWeight(.medium)
+                        .font(.system(size: 15))
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(Color.black)
+                        .fontWeight(.semibold)
+                        .font(.system(size: 12))
+                }
+            }
+            .padding(15)
+            .frame(maxWidth: .infinity)
+            .background(Color.white)
+            .cornerRadius(15)
+            .padding(.top)
+            
             
             Spacer()
+            Button(action: {
+                logout()
+            }) {
+                HStack{
+                    Spacer()
+                    Text("Logout")
+                        .foregroundColor(.white)
+                    Spacer()
+                }
+                .padding(.vertical,10)
+                .background(Color.lightBlue)
+                .cornerRadius(12)
+
+            }
         }
-        .background(Color.white)
-        .cornerRadius(20)
-        .shadow(radius: 10)
+        
         .padding()
-        .navigationTitle("Profile")
-        .navigationBarTitleDisplayMode(.inline)
+        .frame(maxWidth: .infinity)
+        .background(Color("AppBgColor"))
+        .onAppear {
+            userName = authViewModel.userModel?.displayName ?? "Adeesha Peiris"
+            userEmail = authViewModel.userModel?.email ?? "Adeesha@gmail.com"
+            
+        }
+        
+        
     }
+    
+    private func logout() {
+        self.authViewModel.signOut()
+        
+    }
+    
+    
 }
 
 #Preview {

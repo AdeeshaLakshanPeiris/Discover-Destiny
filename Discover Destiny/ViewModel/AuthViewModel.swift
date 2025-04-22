@@ -32,39 +32,39 @@ class AuthViewModel: ObservableObject {
         lastName: String,
         completion: @escaping (Bool) -> Void
     ) {
-        authError = nil
+
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
+
             if let error = error {
                 self?.authError = error.localizedDescription
                 completion(false)
                 return
             }
 
-            self?.user = result?.user
-            self?.isAuthenticated = true
-
-            if let userId = result?.user.uid {
-                self?.storeUserNameInFirestore(userId: userId, firstName: firstName, lastName: lastName)
+            guard let user = result?.user else {
+                self?.authError = "No user returned"
+                completion(false)
+                return
             }
 
-            completion(true)
+            self?.user = user
+
+            self?.storeUserNameInFirestore(userId: user.uid, firstName: firstName, lastName: lastName, email: email) { success in
+                self?.isAuthenticated = success
+                completion(success)
+            }
         }
     }
 
-
-    func storeUserNameInFirestore(userId: String, firstName: String, lastName: String) {
+    func storeUserNameInFirestore(userId: String, firstName: String, lastName: String, email: String, completion: @escaping (Bool) -> Void) {
         guard !firstName.isEmpty, !lastName.isEmpty else {
             self.authError = "First name and last name cannot be empty."
+            completion(false)
             return
         }
 
         let db = Firestore.firestore()
         let userRef = db.collection("users").document(userId)
-
-        guard let email = user?.email else {
-            self.authError = "Email is missing. Please check your authentication details."
-            return
-        }
 
         userRef.setData([
             "firstName": firstName,
@@ -73,8 +73,11 @@ class AuthViewModel: ObservableObject {
         ]) { [weak self] error in
             if let error = error {
                 self?.authError = "Error saving user data: \(error.localizedDescription)"
+                print("❌ Error saving user data: \(error.localizedDescription)")
+                completion(false)
             } else {
-                print("User data saved successfully!")
+                print("✅ User data saved successfully!")
+                completion(true)
             }
         }
     }

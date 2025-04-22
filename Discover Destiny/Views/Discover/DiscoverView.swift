@@ -114,17 +114,22 @@ let topSearchHotels: [Hotel] = [
 struct DiscoverView: View {
     @State private var searchText = ""
     @State private var selectedHotel: Hotel?
-    
+    @State private var maxPrice: Double = 300
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading) {
                     SearchHeaderView()
-                    SearchTopSearchesView(searchText: searchText, selectedHotel: $selectedHotel)
+                    SearchTopSearchesView(
+                        searchText: searchText,
+                        selectedHotel: $selectedHotel,
+                        maxPrice: $maxPrice
+                    )
                 }
             }
             .navigationDestination(item: $selectedHotel) { hotel in
-                BookingConfirmView(hotel: hotel)
+                BookingView(hotel: hotel)
             }
         }
     }
@@ -152,12 +157,12 @@ struct SearchHeaderView : View {
 
 struct SearchCardView: View {
     @Binding var searchText: String
+    @Binding var maxPrice: Double
+
     @State private var selectedDate: String = ""
     @State private var selectedRooms: String = ""
-    
     let minPrice: Double = 50
-    @State private var maxPrice: Double = 300
-    
+
     var body: some View {
         VStack(spacing: 10){
             HStack(alignment: .center, spacing: 15){
@@ -213,24 +218,12 @@ struct SearchCardView: View {
                 }
                 .font(.system(size: 12))
                 .foregroundColor(.gray)
-                
+
                 Slider(value: $maxPrice, in: minPrice...500, step: 10)
                     .accentColor(Color("LightBlue"))
             }
-            
-            Button {
-                
-            } label: {
-                Spacer()
-                Text("SEARCH HOTEL")
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical,15)
-                    .font(.system(size: 12, weight: .semibold))
-                Spacer()
-            }
-            .background(Color("LightBlue"))
-            .cornerRadius(8)
+
+            // ... existing search button
         }
         .padding()
         .frame(maxWidth: .infinity)
@@ -239,20 +232,24 @@ struct SearchCardView: View {
     }
 }
 
+
 struct SearchTopSearchesView: View {
     @State var searchText: String
     @Binding var selectedHotel: Hotel?
-    
+    @Binding var maxPrice: Double
+
     private var filteredHotels: [Hotel] {
-        searchText.isEmpty ? topSearchHotels : topSearchHotels.filter {
-            $0.name.lowercased().contains(searchText.lowercased()) ||
-            $0.location.lowercased().contains(searchText.lowercased())
+        topSearchHotels.filter {
+            (searchText.isEmpty ||
+             $0.name.lowercased().contains(searchText.lowercased()) ||
+             $0.location.lowercased().contains(searchText.lowercased()))
+            && $0.price <= maxPrice
         }
     }
-    
+
     var body: some View {
         VStack(spacing: 15) {
-            SearchCardView(searchText: $searchText)
+            SearchCardView(searchText: $searchText, maxPrice: $maxPrice)
             ForEach(filteredHotels) { hotel in
                 TopSearchCardView(hotel: hotel) {
                     selectedHotel = hotel
@@ -262,6 +259,7 @@ struct SearchTopSearchesView: View {
         .padding(.horizontal)
     }
 }
+
 
 
 
