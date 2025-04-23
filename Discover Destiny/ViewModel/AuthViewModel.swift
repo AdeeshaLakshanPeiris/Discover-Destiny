@@ -15,6 +15,8 @@ class AuthViewModel: ObservableObject {
     @Published var isAuthenticated = false
     @Published var authError: String?
     @Published var userModel: UserModel?
+    @Published var didCompleteBiometricAuth: Bool = false
+
 
     init() {
         self.user = Auth.auth().currentUser

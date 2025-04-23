@@ -14,17 +14,18 @@ struct BookingView: View {
 
     
     var body: some View {
-        ZStack {
-            VStack {
-                VStack(){
-                    ZStack(alignment: .topLeading) {
-                        
-                        Image(hotel.imageName) // <- Use passed hotel image
-                            .resizable()
-                            .ignoresSafeArea()
-                        
-                        
-                        Button(action: {
+        ScrollView{
+            ZStack {
+                VStack {
+                    VStack(){
+                        ZStack(alignment: .topLeading) {
+                            
+                            Image(hotel.imageName) // <- Use passed hotel image
+                                .resizable()
+                                .ignoresSafeArea()
+                            
+                            
+                            Button(action: {
                                 presentationMode.wrappedValue.dismiss()
                             }) {
                                 Image(systemName: "chevron.left")
@@ -36,67 +37,72 @@ struct BookingView: View {
                                     .padding(.top, 10)
                                     .padding(.leading, 20)
                             }
-                        
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: UIScreen.main.bounds.width / 1.2)
-                    .aspectRatio(contentMode: .fill)
-                    
-                    HStack {
-                        VStack(alignment: .leading , spacing: 5){
-                            Text(hotel.name)
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(.darkBlue)
-                            HStack {
-                                Text(hotel.location)
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.darkBlue)
-                                    .opacity(0.6)
-                                Text("• \(hotel.distanceFromCenter)")
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.darkBlue)
-                                    .opacity(0.6)
-                                Spacer()
-                            }
-                            HStack(alignment: .lastTextBaseline) {
-                                Text("$\(hotel.price, specifier: "%.2f")/")
-                                    .font(.system(size: 24, weight: .semibold))
-                                    .foregroundColor(.lightBlue)
-                                Text("1 night")
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.darkBlue)
-                                    .opacity(0.6)
-                                    .padding(.leading ,-5)
-                                Spacer()
-                            }
+                            
                         }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: UIScreen.main.bounds.width / 1.2)
+                        .aspectRatio(contentMode: .fill)
+                        
+                        HStack {
+                            VStack(alignment: .leading , spacing: 5){
+                                Text(hotel.name)
+                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundColor(.darkBlue)
+                                HStack {
+                                    Text(hotel.location)
+                                        .font(.system(size: 14, weight: .regular))
+                                        .foregroundColor(.darkBlue)
+                                        .opacity(0.6)
+                                    Text("• \(hotel.distanceFromCenter)")
+                                        .font(.system(size: 14, weight: .regular))
+                                        .foregroundColor(.darkBlue)
+                                        .opacity(0.6)
+                                    Spacer()
+                                }
+                                
+                                
+                                HStack(alignment: .lastTextBaseline) {
+                                    Text("$\(hotel.price, specifier: "%.2f")/")
+                                        .font(.system(size: 24, weight: .semibold))
+                                        .foregroundColor(.lightBlue)
+                                    Text("1 night")
+                                        .font(.system(size: 14, weight: .regular))
+                                        .foregroundColor(.darkBlue)
+                                        .opacity(0.6)
+                                        .padding(.leading ,-5)
+                                    Spacer()
+                                }
+                            }
+                            Spacer()
+                        }
+                        .padding(20)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.white)
+                        .cornerRadius(30)
+                        .padding(.top, -40)
+                        
+                        BookingReviwsCardView()
+                        WeatherView()
+                        ARButton()
+                        BookingFacilitiesView()
                         Spacer()
-                    }
-                    .padding(20)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.white)
-                    .cornerRadius(30)
-                    .padding(.top, -40)
-
-                    BookingReviwsCardView()
-                    ARButton()
-                    BookingFacilitiesView()
-                    Spacer()
-                    
-                    NavigationLink(destination: BookingConfirmView(hotel: hotel)) {
-                        Text("BOOK NOW")
-                            .foregroundColor(.white)
-                            .fontWeight(.semibold)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.lightBlue)
-                            .cornerRadius(12)
-                            .padding(.horizontal ,20)
-                            .padding(.bottom)
+                        
+                        NavigationLink(destination: BookingConfirmView(hotel: hotel)) {
+                            Text("BOOK NOW")
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.lightBlue)
+                                .cornerRadius(12)
+                                .padding(.horizontal ,20)
+                                .padding(.bottom)
+                        }
                     }
                 }
             }
         }
+        .ignoresSafeArea(edges: .top)
         .navigationBarBackButtonHidden(true)
     }
 }
@@ -235,6 +241,48 @@ struct BookingReviwsCardView: View {
         .padding(.horizontal, 20)
     }
 }
+
+
+import SwiftUI
+
+struct WeatherView: View {
+    @StateObject private var viewModel = WeatherViewModel()
+    @State private var cityInput = "Kandy"
+
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack{
+                
+                if let iconURL = viewModel.iconURL {
+                    AsyncImage(url: iconURL) { image in
+                        image.resizable()
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: 100, height: 100)
+                }
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text("\(viewModel.temperature) \(viewModel.description) - \(viewModel.clothingAdvice)")
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(nil)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.horizontal)
+                }
+
+                
+                
+            }
+           
+        }
+        .padding()
+        .onAppear {
+            viewModel.fetchWeather(for: cityInput)
+        }
+    }
+}
+
 
 
 
