@@ -13,7 +13,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
 
     @Published var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 7.8731, longitude: 80.7718), // default
+        center: CLLocationCoordinate2D(latitude: 7.8731, longitude: 80.7718),
         span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
     )
     
@@ -47,7 +47,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             )
             
             if !self.hasGeneratedLocations {
-                self.nearbyLocations = self.generateNearbyLocations(from: coordinate, count: 5)
+                self.nearbyLocations = self.generateNearbyLocations(from: coordinate, count: 10)
                 self.hasGeneratedLocations = true
             }
         }

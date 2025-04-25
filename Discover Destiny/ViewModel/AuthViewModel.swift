@@ -75,10 +75,10 @@ class AuthViewModel: ObservableObject {
         ]) { [weak self] error in
             if let error = error {
                 self?.authError = "Error saving user data: \(error.localizedDescription)"
-                print("❌ Error saving user data: \(error.localizedDescription)")
+                print("Error saving user data: \(error.localizedDescription)")
                 completion(false)
             } else {
-                print("✅ User data saved successfully!")
+                print("User data saved successfully!")
                 completion(true)
             }
         }

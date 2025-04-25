@@ -147,7 +147,7 @@ struct SignUpView: View {
                     }
                 
                 Spacer()
-                NavigationLink(destination: LoginView(isSignedIn: .constant(authViewModel.isAuthenticated))
+                NavigationLink(destination: LoginView()
                     .environmentObject(authViewModel)) {
                     HStack {
                         Text("Already have an account?")

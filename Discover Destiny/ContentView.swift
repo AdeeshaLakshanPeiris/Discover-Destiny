@@ -95,7 +95,7 @@ struct SplashView: View {
                         FaceIDView()
                     }
                 } else {
-                    SignUpView()
+                    LoginView()
                 }
             }
         }

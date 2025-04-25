@@ -12,7 +12,6 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @Binding var isSignedIn: Bool
     @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
@@ -88,7 +87,7 @@ struct LoginView: View {
                 
                 Button(action: {
                     if authViewModel.isAuthenticated {
-                        isSignedIn = true
+                        authViewModel.didCompleteBiometricAuth = authViewModel.isAuthenticated
                     }
                 }) {
                     HStack {
@@ -150,7 +149,7 @@ struct LoginView: View {
         
         .onReceive(authViewModel.$isAuthenticated) { authenticated in
             if authenticated {
-                isSignedIn = true
+                authViewModel.didCompleteBiometricAuth = authenticated
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -160,7 +159,7 @@ struct LoginView: View {
 
 #Preview {
     let s = true
-    LoginView(isSignedIn: .constant(false))
+    LoginView()
         .environmentObject(AuthViewModel())
 
 }
