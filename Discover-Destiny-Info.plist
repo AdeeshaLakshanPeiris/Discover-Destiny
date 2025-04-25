@@ -14,5 +14,7 @@
     <string>This app requires access to the camera for AR functionality.</string>
     <key>NSFaceIDUsageDescription</key>
     <string>This app uses Face ID to securely authenticate you.</string>
+    <key>NSUserNotificationUsageDescription</key>
+    <string>We use notifications to alert you when your booking is confirmed.</string>
 </dict>
 </plist>

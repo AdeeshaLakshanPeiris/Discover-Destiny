@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseAuth
 import CoreLocation
+import UserNotifications
 
 
 let nearbyHotels: [Hotel] = [
@@ -232,6 +233,8 @@ struct HomeView: View {
                     Spacer()
                 }
             }
+        }.onAppear {
+            
         }
     }
 }
@@ -312,6 +315,7 @@ struct SuggestionView: View {
         
         
         .background(Color("AppBgColor"))
+        
     }
 }
 

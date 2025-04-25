@@ -8,6 +8,8 @@
 import SwiftUI
 import FirebaseAuth
 import CoreLocation
+import UserNotifications
+
 
 struct BookingConfirmView: View {
     let hotel: Hotel?
@@ -163,9 +165,34 @@ struct BookingConfirmView: View {
             userEmail: userEmail
         )
         
+        sendConfirmationNotification(hotelName: hotel.name)
+        
         presentationMode.wrappedValue.dismiss()
     }
+    
+    private func sendConfirmationNotification(hotelName: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "Booking Confirmed 🎉"
+        content.body = "Your stay at \(hotelName) is booked successfully!"
+        content.sound = .default
+        content.userInfo = ["action": "open_booking"]
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Failed to schedule notification: \(error.localizedDescription)")
+            }
+        }
+    }
+
+
 }
+
+
+
 
 
 
